@@ -1,0 +1,25 @@
+{
+  "name": "@webautomations/core-sdk",
+  "version": "0.1.0",
+  "description": "Core schema, execution engine and SDK for WebAutomations graph workflows",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "test": "tsc && node --test dist/test/*.test.js"
+  },
+  "keywords": [
+    "webautomation",
+    "mcp",
+    "browser-automation",
+    "react-flow",
+    "sdk"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^5.3.3"
+  }
+}

@@ -1,0 +1,115 @@
+{
+  "schemaVersion": "1.0.0",
+  "metadata": {
+    "id": "auto_scraping_exemplo",
+    "name": "Exemplo de Coleta de Preços e Navegação",
+    "description": "Navega para um site, faz busca, extrai a lista de produtos e exporta para JSON",
+    "version": "1.0.0",
+    "createdAt": "2026-10-09T16:00:00.000Z",
+    "updatedAt": "2026-10-09T16:00:00.000Z",
+    "tags": ["ecommerce", "scraping"]
+  },
+  "settings": {
+    "stopOnError": true,
+    "defaultTimeoutMs": 10000,
+    "logLevel": "info",
+    "parallelBranchesEnabled": false
+  },
+  "variables": {
+    "searchTerm": "smartphones",
+    "targetSite": "https://example.com/produtos",
+    "productsList": []
+  },
+  "nodes": [
+    {
+      "id": "node_start_1",
+      "type": "start",
+      "category": "flow_logic",
+      "position": { "x": 100, "y": 200 },
+      "data": {
+        "label": "Início Manual",
+        "triggerType": "manual"
+      }
+    },
+    {
+      "id": "node_nav_1",
+      "type": "navigate",
+      "category": "browser_navigation",
+      "position": { "x": 350, "y": 200 },
+      "data": {
+        "label": "Ir para Página",
+        "url": "{{targetSite}}",
+        "waitUntil": "domcontentloaded"
+      }
+    },
+    {
+      "id": "node_type_1",
+      "type": "type_input",
+      "category": "dom_interaction",
+      "position": { "x": 600, "y": 200 },
+      "data": {
+        "label": "Digitar Busca",
+        "selector": "input[name='search']",
+        "selectorType": "css",
+        "text": "{{searchTerm}}",
+        "mode": "human_typing",
+        "pressEnterAfter": true
+      }
+    },
+    {
+      "id": "node_wait_1",
+      "type": "wait_for_element",
+      "category": "dom_interaction",
+      "position": { "x": 850, "y": 200 },
+      "data": {
+        "label": "Esperar Resultados",
+        "selector": ".product-card",
+        "selectorType": "css",
+        "state": "visible",
+        "timeoutMs": 8000
+      }
+    },
+    {
+      "id": "node_scrape_1",
+      "type": "scrape_list",
+      "category": "data_network",
+      "position": { "x": 1100, "y": 200 },
+      "data": {
+        "label": "Extrair Produtos",
+        "selector": ".product-card",
+        "selectorType": "css",
+        "fields": [
+          { "name": "title", "subSelector": ".product-title", "extractType": "innerText" },
+          { "name": "price", "subSelector": ".product-price", "extractType": "innerText" },
+          { "name": "link", "subSelector": "a", "extractType": "attribute", "attributeName": "href" }
+        ],
+        "saveToVar": "productsList",
+        "maxItems": 20
+      }
+    },
+    {
+      "id": "node_export_1",
+      "type": "export_file",
+      "category": "data_network",
+      "position": { "x": 1350, "y": 200 },
+      "data": {
+        "label": "Salvar JSON",
+        "sourceVar": "productsList",
+        "format": "json",
+        "filename": "produtos_coletados.json"
+      }
+    }
+  ],
+  "edges": [
+    { "id": "e1", "source": "node_start_1", "target": "node_nav_1" },
+    { "id": "e2", "source": "node_nav_1", "target": "node_type_1" },
+    { "id": "e3", "source": "node_type_1", "target": "node_wait_1" },
+    { "id": "e4", "source": "node_wait_1", "target": "node_scrape_1" },
+    { "id": "e5", "source": "node_scrape_1", "target": "node_export_1" }
+  ],
+  "viewport": {
+    "x": 0,
+    "y": 0,
+    "zoom": 1
+  }
+}
